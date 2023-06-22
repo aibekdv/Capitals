@@ -12,6 +12,8 @@ class TestPage extends StatefulWidget {
 
 class _TestPageState extends State<TestPage> {
   int indexText = 0;
+  int correctAnswers = 0;
+  int wrongAnswers = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -33,19 +35,19 @@ class _TestPageState extends State<TestPage> {
                 ),
               ],
             ),
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Text(
-                  '0',
+                  '$wrongAnswers',
                   style: AppTextSyle.num1Style,
                 ),
-                Text(
+                const Text(
                   '32',
                   style: AppTextSyle.num2Style,
                 ),
                 Text(
-                  '0',
+                  '$correctAnswers',
                   style: AppTextSyle.num3Style,
                 ),
               ],
@@ -70,10 +72,10 @@ class _TestPageState extends State<TestPage> {
         children: [
           Slider(
             activeColor: Colors.black,
-            value: 200,
-            onChanged: (v) {},
+            value: indexText.toDouble(),
+            onChanged: (value) {},
             min: 0,
-            max: 200,
+            max: 5,
           ),
           Text(
             widget.suroo[indexText].text,
@@ -104,10 +106,43 @@ class _TestPageState extends State<TestPage> {
                   color: Colors.grey[400],
                   child: InkWell(
                     onTap: () {
-                      // onTap(jooptor[index].isTrue);
+                      if (indexText + 1 == widget.suroo.length) {
+                        showDialog<String>(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                            title: const Text('Сиздин тест жыйынтыгыңыз!'),
+                            content: Text(
+                                'Туура: $correctAnswers\nКата:$wrongAnswers'),
+                            actions: <Widget>[
+                              TextButton(
+                                onPressed: () {
+                                  indexText = 0;
+                                  wrongAnswers = 0;
+                                  correctAnswers = 0;
+                                  setState(() {
+                                    Navigator.pop(context);
+                                  });
+                                },
+                                child: const Text('Cancel'),
+                              ),
+                            ],
+                          ),
+                        );
+                      } else {
+                        if (widget.suroo[indexText].answers[index]
+                                .correctAnswer ==
+                            true) {
+                          correctAnswers++;
+                        } else {
+                          wrongAnswers++;
+                        }
+                        setState(() {
+                          indexText++;
+                        });
+                      }
                     },
                     child: Center(
-                      child: Text(widget.suroo[indexText].answers.toString()),
+                      child: Text(widget.suroo[indexText].answers[index].text),
                     ),
                   ),
                 );
